@@ -2,7 +2,7 @@ import cv2
 from pathlib import Path
 
 #here alone there is ../ but it wont be there in main program
-cascPath=Path(r'../cascades/haarcascade_frontalface_default.xml').absolute()
+cascPath=Path(__file__+r'/../../cascades/haarcascade_frontalface_default.xml')
 faceCascade = cv2.CascadeClassifier(str(cascPath))
 
 video_capture = cv2.VideoCapture(0)
