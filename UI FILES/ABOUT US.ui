@@ -30,7 +30,7 @@
    <property name="geometry">
     <rect>
      <x>300</x>
-     <y>40</y>
+     <y>70</y>
      <width>141</width>
      <height>141</height>
     </rect>
@@ -39,7 +39,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap>C:/Users/Maruthi/Downloads/facial-recognition.png</pixmap>
+    <pixmap>facial-recognition.png</pixmap>
    </property>
    <property name="scaledContents">
     <bool>true</bool>
@@ -139,6 +139,22 @@
    </property>
    <property name="text">
     <string>SRIHARI</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_8">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>20</y>
+     <width>231</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 20pt &quot;MS Shell Dlg 2&quot;;</string>
+   </property>
+   <property name="text">
+    <string>ABOUT US:</string>
    </property>
   </widget>
  </widget>
