@@ -6,18 +6,25 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
+import face_recognition
+
 import cv2
 
 class MainWindow(QWidget):
     def __init__(self):
-        super(MainWindow,self).__init__()
+        super().__init__()
         self.setWindowTitle('Face Recognition')
         self.resize(640,480)
+        icon = QIcon()
+        icon.addPixmap(QPixmap("UI_Files\\facial-recognition.png"), QIcon.Normal, QIcon.Off)
+        self.setWindowIcon(icon)
+        # self.setWindowFlags(Qt.MSWindowsFixedSizeDialogHint)
 
-        stylesheet = open(Path(__file__+r'\..\style\buttons.qss')).read()
+        stylesheet = open(Path(__file__+r'\..\..\style\buttons.qss')).read()
 
         #creating main layout
         self.MainLayout = QVBoxLayout()
+
 
         # actually setting it as mainlayout
         self.setLayout(self.MainLayout)
@@ -25,17 +32,29 @@ class MainWindow(QWidget):
 
         #creating label and adding it to main layout
         self.label = QLabel()
+        self.label.setPixmap(QPixmap("UI_Files\\no-camera.png").scaled(300,300,Qt.KeepAspectRatio))
+        # self.label.resize(640,480)
+        # self.MainLayout.setFixedSize(self.label.size())
+        self.label.setScaledContents(True)
         # self.label.setAlignment(Qt.AlignCenter)
-        # self.label.setFixedSize(640,480)
+        
 
+        try:
+            self.Devices = device.getDeviceList()
+        except SystemError:
+            self.Devices = ['You have no camera']
 
         self.combo_box = QComboBox()
-        self.combo_box.addItems(device.getDeviceList())
+        self.combo_box.addItems(self.Devices)
         self.combo_box.setFixedSize(300,50)
 
 
         self.selectcam = QPushButton('select device')
         self.selectcam.setFixedSize(150,50)
+
+        if self.Devices == ['You have no camera']:
+            self.combo_box.setDisabled(True)
+            self.selectcam.setDisabled(True)
         
         # self.selectcam.setStyleSheet(stylesheet)
         self.selectcam.clicked.connect(self.camupdate)
@@ -59,23 +78,38 @@ class MainWindow(QWidget):
     def camupdate(self):
         self.Worker1.changeindex(self.combo_box.currentIndex())
 
+    def closeEvent(self,event):
+        self.Worker1.ThreadActive = False
+        self.Worker1.forcequit = True
+
 class Worker1(QThread):
     def __init__(self):
-        super(Worker1,self).__init__()
+        super().__init__()
         self.index = 0
         self.ThreadActive = True
+        self.forcequit = False
+        self.camcount = 1
+        
         self.Cap = cv2.VideoCapture(0)
+        if self.Cap is None or not self.Cap.isOpened():
+            self.camcount = None
         self.Cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
     changePixmap = pyqtSignal(QImage)
 
-    def main(self,Cap):
+    def main(self,Cap,count):
         while True:
+            if count == None:
+                break
             if not self.ThreadActive:
-                print(self.index)
                 Cap.release()
+                if self.forcequit:
+                    break
+
+                print(self.index)
                 Cap = cv2.VideoCapture(self.index)
                 self.ThreadActive = True
+
 
             ret,frame = Cap.read()
         
@@ -83,7 +117,7 @@ class Worker1(QThread):
             faces = self.Cascade.detectMultiScale(
                 gray,
                 scaleFactor=1.1,
-                minNeighbors=7,
+                minNeighbors=3,
                 minSize=(30, 30),
                 flags=cv2.CASCADE_SCALE_IMAGE
             )
@@ -101,7 +135,7 @@ class Worker1(QThread):
 
 
     def run(self):
-        self.main(self.Cap)
+        self.main(self.Cap,self.camcount)
 
     def changeindex(self,index):
         self.index = index 

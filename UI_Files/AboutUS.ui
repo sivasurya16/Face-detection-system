@@ -2,16 +2,28 @@
 <ui version="4.0">
  <class>Dialog</class>
  <widget class="QDialog" name="Dialog">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>726</width>
-    <height>514</height>
+    <width>432</width>
+    <height>421</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>About Us</string>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
   </property>
   <widget class="QListWidget" name="listWidget">
    <property name="geometry">
@@ -29,7 +41,7 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>300</x>
+     <x>150</x>
      <y>70</y>
      <width>141</width>
      <height>141</height>
@@ -98,7 +110,7 @@
     <rect>
      <x>150</x>
      <y>320</y>
-     <width>261</width>
+     <width>131</width>
      <height>31</height>
     </rect>
    </property>
@@ -106,15 +118,15 @@
     <string notr="true">font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
    </property>
    <property name="text">
-    <string>SIVA</string>
+    <string>SIVASURYA M</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_6">
    <property name="geometry">
     <rect>
      <x>150</x>
-     <y>360</y>
-     <width>101</width>
+     <y>350</y>
+     <width>141</width>
      <height>31</height>
     </rect>
    </property>
@@ -122,23 +134,23 @@
     <string notr="true">font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
    </property>
    <property name="text">
-    <string>SAMMRAJ</string>
+    <string>SAAMRAAJ R B</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_7">
    <property name="geometry">
     <rect>
      <x>150</x>
-     <y>400</y>
-     <width>81</width>
-     <height>41</height>
+     <y>380</y>
+     <width>111</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="styleSheet">
     <string notr="true">font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
    </property>
    <property name="text">
-    <string>SRIHARI</string>
+    <string>SRIHARI S</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_8">
@@ -159,7 +171,7 @@
   </widget>
  </widget>
  <resources>
-  <include location="hope.qrc"/>
+  <include location="about us.qrc"/>
  </resources>
  <connections/>
 </ui>

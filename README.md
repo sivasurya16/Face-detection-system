@@ -20,7 +20,7 @@
 <ul>
     <li>[x] Learn github basics and learn how to commit and learn the basic workflow</li>
     <ul>Create an working face recognition app with following features
-        <li> [ ] Detect faces </li>
+        <li> [x] Detect faces </li>
         <li> [ ] Detect age</li>
         <li> [ ] Detect Gender</li>
         <li> [ ] Predict persons mood</li>

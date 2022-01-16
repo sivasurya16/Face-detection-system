@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Face Recognition</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>facial-recognition.png</normaloff>facial-recognition.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -19,7 +23,7 @@
      <rect>
       <x>40</x>
       <y>70</y>
-      <width>191</width>
+      <width>171</width>
       <height>171</height>
      </rect>
     </property>
@@ -33,7 +37,7 @@
      <enum>Qt::AutoText</enum>
     </property>
     <property name="pixmap">
-     <pixmap resource="../../../../demo.qrc">:/newPrefix/Downloads/facial-recognition (1).png</pixmap>
+     <pixmap>facial-recognition.png</pixmap>
     </property>
     <property name="scaledContents">
      <bool>true</bool>
@@ -59,7 +63,7 @@
      <string>FACE RECOGNITION</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="Start">
     <property name="geometry">
      <rect>
       <x>90</x>
@@ -79,7 +83,7 @@
      <string>START</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="About">
     <property name="geometry">
      <rect>
       <x>90</x>
@@ -103,7 +107,7 @@
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources>
-  <include location="../../../../demo.qrc"/>
+  <include location="about us.qrc"/>
  </resources>
  <connections/>
 </ui>

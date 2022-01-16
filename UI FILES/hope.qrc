@@ -1,6 +1,0 @@
-<RCC>
-  <qresource/>
-  <qresource prefix="newPrefix">
-    <file>C:/Users/Maruthi/Downloads/facial-recognition.png</file>
-  </qresource>
-</RCC>
