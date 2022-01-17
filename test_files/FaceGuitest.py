@@ -2,6 +2,7 @@ import sys
 import device
 from pathlib import Path,PurePath
 import os
+import threading
 import time
 
 from PyQt5.QtGui import *
@@ -101,9 +102,6 @@ class Worker1(QThread):
     changePixmap = pyqtSignal(QImage)
 
     def main(self,Cap,count):
-        Threadran = False
-        waitTime = None
-
         PATH = 'pictures'
         if not os.path.exists(PATH):
             os.mkdir(PATH)
@@ -147,35 +145,15 @@ class Worker1(QThread):
             ret,frame = Cap.read()
             imgs = cv2.resize(frame, (0,0),None,0.25,0.25)
             imgs = cv2.cvtColor(imgs, cv2.COLOR_BGR2RGB)
-            # face recognition
-            if Threadran == False:
-                faces_cur_frame = face_recognition.face_locations(imgs)
-                encodes_cur_frame = face_recognition.face_encodings(imgs, faces_cur_frame)
-                # count = 0
-                Threadran = True
-                waitTime = time.time()
-                for encodeFace, faceLoc in zip(encodes_cur_frame, faces_cur_frame):
-                    self.name = "unknown"
-                    match = face_recognition.compare_faces(self.encode_list, encodeFace, tolerance=0.60)
-                    face_dis = face_recognition.face_distance(self.encode_list, encodeFace)
-                    best_match_index = np.argmin(face_dis)
-                    # print("s",best_match_index)
-                    # print(self.name)
-                    if match[best_match_index]:
-                        self.name = self.names[best_match_index].upper()
-                        
 
-
-            if time.time()-waitTime > 5:
-                Threadran = False
-                    # time.sleep(0.5)
-                    # print(self.name)
-                    # y1, x2, y2, x1 = (i*4 for i in faceLoc)
-                    # cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                    # cv2.rectangle(frame, (x1, y2 - 20), (x2, y2), (0, 255, 0), cv2.FILLED)
-                    # cv2.putText(frame, self.name, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 0.5, (255, 255, 255), 1)
-
+            # self.faceDetectThread = faceDetect(imgs=imgs,encode_list=self.encode_list,names=self.names,name=self.name)
+            # self.faceDetectThread.start()
                     
+            # self.facerec(frame, self.encode_list, self.names, self.name,imgs)
+            
+            th = threading.Thread(target=self.facerec,args=(frame, self.encode_list, self.names, self.name,imgs))
+            th.start()
+            # th.join()
             gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
             faces = self.Cascade.detectMultiScale(
                 gray,
@@ -188,7 +166,7 @@ class Worker1(QThread):
                 center = (x + z//2, y + h//2)
                 frame = cv2.ellipse(frame, center, (z//2, h//2), 0, 0, 360, (255, 0, 255), 4)
                 # frame = cv2.rectangle(frame, (x, y), (x+z, y+h), (225, 0, 0), 2)
-                cv2.putText(frame, self.name, (x + 6, y - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 1)
+                # cv2.putText(frame, self.name, (x + 6, y - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 1)
             
             rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             # FlippedImage = cv2.flip(rgbImage, 1)
@@ -198,8 +176,21 @@ class Worker1(QThread):
             p = self.convertToQtFormat.scaled(*frame.shape[:2], Qt.KeepAspectRatio)
             self.changePixmap.emit(p)
 
-    def facerec(self,frame,encode_list_known,names):
-        pass
+    def facerec(self,frame,encode_list_known,names,name,imgs):
+        faces_cur_frame = face_recognition.face_locations(imgs)
+        encodes_cur_frame = face_recognition.face_encodings(imgs, faces_cur_frame)
+        # count = 0
+        for encodeFace, faceLoc in zip(encodes_cur_frame, faces_cur_frame):
+            name = "unknown"
+            match = face_recognition.compare_faces(self.encode_list, encodeFace, tolerance=0.60)
+            face_dis = face_recognition.face_distance(self.encode_list, encodeFace)
+            best_match_index = np.argmin(face_dis)
+            # print("s",best_match_index)
+            # print(self.name)
+            if match[best_match_index]:
+                name = names[best_match_index].upper()
+                print(name)
+                # time.sleep(10)
 
     def run(self):
         self.main(self.Cap,self.camcount)
@@ -209,6 +200,39 @@ class Worker1(QThread):
         self.ThreadActive = False
         print(self.isFinished())
 
+
+# class faceDetect(QtConcurent):
+#     """docstring for FaceDetect"""
+#     def __init__(self,imgs,encode_list,names,name):
+#         super().__init__()
+#         self.imgs = imgs
+#         self.encode_list = encode_list
+#         self.names = names
+#         self.name = name
+#     def run(self):
+#         # face recognition
+#         faces_cur_frame = face_recognition.face_locations(self.imgs)
+#         encodes_cur_frame = face_recognition.face_encodings(self.imgs, faces_cur_frame)
+#         # count = 0
+#         for encodeFace, faceLoc in zip(encodes_cur_frame, faces_cur_frame):
+#             self.name = "unknown"
+#             match = face_recognition.compare_faces(self.encode_list, encodeFace, tolerance=0.60)
+#             face_dis = face_recognition.face_distance(self.encode_list, encodeFace)
+#             best_match_index = np.argmin(face_dis)
+#             # print("s",best_match_index)
+#             # print(self.name)
+#             if match[best_match_index]:
+#                 self.name = self.names[best_match_index].upper()
+#                 print(self.name)
+#                 # y1, x2, y2, x1 = (i*4 for i in faceLoc)
+#                 # cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+#                 # cv2.rectangle(frame, (x1, y2 - 20), (x2, y2), (0, 255, 0), cv2.FILLED)
+#                 # cv2.putText(frame, name, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 0.5, (255, 255, 255), 1)
+
+        # for i in range(5):
+        #     time.sleep(10)
+        #     print('aye')
+            
 
 
 

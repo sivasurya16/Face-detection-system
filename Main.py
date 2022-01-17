@@ -6,8 +6,8 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
 
-from Modules import AboutUs,FaceGui,startWindow
-
+from Modules import AboutUs,startWindow,FaceGui
+# from Modules import FaceGuitest2 as FaceGui
 
 class AboutWindow(AboutUs.Ui_Dialog,QDialog):
     def __init__(self):
@@ -41,8 +41,8 @@ class MainWindow(startWindow.Ui_MainWindow,QMainWindow):
 
     def face_detect_window(self,checked):
         self.w = FaceWindow()
-        self.hide()
         self.w.show()
+        self.close()
 
 
 

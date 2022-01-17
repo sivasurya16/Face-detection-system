@@ -34,13 +34,35 @@ class MainWindow(QWidget):
         self.setStyleSheet(stylesheet)
 
         #creating label and adding it to main layout
+        self.sideBySide = QWidget()
+        self.sideBySide.setStyleSheet('background-color:rgba(255,0,0,0)')
+        self.sideBySideLayout = QHBoxLayout(self.sideBySide)
         self.label = QLabel()
         self.label.setPixmap(QPixmap("UI_Files\\no-camera.png").scaled(300,300,Qt.KeepAspectRatio))
         # self.label.resize(640,480)
         # self.MainLayout.setFixedSize(self.label.size())
         self.label.setScaledContents(True)
         # self.label.setAlignment(Qt.AlignCenter)
+
+        self.details = QGroupBox('Details')
+        self.details.setStyleSheet("QGroupBox{ margin-top : 15px ; padding-top: 15px} QGroupBox:title{ subcontrol-origin: margin;subcontrol-position: top center; font:Bold }")
+        font = QFont()
+        font.setFamily("Roboto Condensed Light")
+        font.setPointSize(12)
+        font.setBold(False)
+        font.setWeight(50)
+        self.details.setFont(font)
+        self.detailsLayout1 = QGridLayout(self.details)
+
+
+        self.Namelabel = QLabel('Name')
+        self.Namelabel.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";")
+        self.detailsLayout1.addWidget(self.Namelabel)
+        self.details.setFixedSize(200,200)
         
+        self.sideBySideLayout.addWidget(self.label)
+        self.sideBySideLayout.addWidget(self.details)
+
 
         try:
             self.Devices = device.getDeviceList()
@@ -63,7 +85,7 @@ class MainWindow(QWidget):
         self.selectcam.clicked.connect(self.camupdate)
         
 
-        self.MainLayout.addWidget(self.label,alignment=Qt.AlignCenter)
+        self.MainLayout.addWidget(self.sideBySide,alignment=Qt.AlignCenter)
         self.MainLayout.addWidget(self.combo_box,alignment=Qt.AlignCenter)
         self.MainLayout.addWidget(self.selectcam,alignment=Qt.AlignCenter | Qt.AlignTop)
         
@@ -148,7 +170,7 @@ class Worker1(QThread):
             imgs = cv2.resize(frame, (0,0),None,0.25,0.25)
             imgs = cv2.cvtColor(imgs, cv2.COLOR_BGR2RGB)
             # face recognition
-            if Threadran == False:
+            if Threadran is False:
                 faces_cur_frame = face_recognition.face_locations(imgs)
                 encodes_cur_frame = face_recognition.face_encodings(imgs, faces_cur_frame)
                 # count = 0
@@ -163,19 +185,15 @@ class Worker1(QThread):
                     # print(self.name)
                     if match[best_match_index]:
                         self.name = self.names[best_match_index].upper()
-                        
-
-
-            if time.time()-waitTime > 5:
-                Threadran = False
-                    # time.sleep(0.5)
                     # print(self.name)
                     # y1, x2, y2, x1 = (i*4 for i in faceLoc)
                     # cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
                     # cv2.rectangle(frame, (x1, y2 - 20), (x2, y2), (0, 255, 0), cv2.FILLED)
                     # cv2.putText(frame, self.name, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 0.5, (255, 255, 255), 1)
 
-                    
+            if time.time()-waitTime > 5:
+                Threadran = False
+
             gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
             faces = self.Cascade.detectMultiScale(
                 gray,
