@@ -16,22 +16,15 @@ class Ui_Dialog(object):
         Dialog.setObjectName("Dialog")
         Dialog.setEnabled(True)
         Dialog.resize(432, 421)
-        Dialog.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint,False)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Dialog.sizePolicy().hasHeightForWidth())
         Dialog.setSizePolicy(sizePolicy)
-        Dialog.setFixedSize(Dialog.size())
-        Dialog.setSizeGripEnabled(False)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("UI_Files\\facial-recognition.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         Dialog.setWindowIcon(icon)
-        Dialog.setFixedSize(Dialog.size())
-        # self.listWidget = QtWidgets.QListWidget(Dialog)
-        # self.listWidget.setGeometry(QtCore.QRect(0, -10, 781, 541))
-        # self.listWidget.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";")
-        # self.listWidget.setObjectName("listWidget")
+        Dialog.setSizeGripEnabled(True)
         self.label = QtWidgets.QLabel(Dialog)
         self.label.setGeometry(QtCore.QRect(150, 70, 141, 141))
         self.label.setText("")
@@ -80,7 +73,6 @@ class Ui_Dialog(object):
         self.label_6.setText(_translate("Dialog", "SAAMRAAJ R B"))
         self.label_7.setText(_translate("Dialog", "SRIHARI S"))
         self.label_8.setText(_translate("Dialog", "ABOUT US:"))
-# import about us_rc
 
 
 if __name__ == "__main__":

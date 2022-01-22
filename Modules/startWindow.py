@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'UI_Files\face recognition.ui'
+# Form implementation generated from reading ui file 'UI_Files\startWindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -18,7 +18,6 @@ class Ui_MainWindow(object):
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("UI_Files\\facial-recognition.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
-        MainWindow.setFixedSize(MainWindow.size())
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -46,13 +45,21 @@ class Ui_MainWindow(object):
         self.Start.setFont(font)
         self.Start.setObjectName("Start")
         self.About = QtWidgets.QPushButton(self.centralwidget)
-        self.About.setGeometry(QtCore.QRect(90, 370, 441, 41))
+        self.About.setGeometry(QtCore.QRect(90, 420, 441, 41))
         font = QtGui.QFont()
         font.setPointSize(14)
         font.setBold(True)
         font.setWeight(75)
         self.About.setFont(font)
         self.About.setObjectName("About")
+        self.addPicture = QtWidgets.QPushButton(self.centralwidget)
+        self.addPicture.setGeometry(QtCore.QRect(90, 360, 441, 41))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        font.setBold(True)
+        font.setWeight(75)
+        self.addPicture.setFont(font)
+        self.addPicture.setObjectName("addPicture")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -67,7 +74,7 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "FACE RECOGNITION"))
         self.Start.setText(_translate("MainWindow", "START"))
         self.About.setText(_translate("MainWindow", "ABOUT"))
-# import about us_rc
+        self.addPicture.setText(_translate("MainWindow", "ADD PICTURE"))
 
 
 if __name__ == "__main__":

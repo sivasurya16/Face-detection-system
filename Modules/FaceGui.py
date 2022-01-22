@@ -1,7 +1,7 @@
 import sys
 import device
-from pathlib import Path,PurePath
-import os
+from pathlib import Path
+import pickle,json
 import time
 
 from PyQt5.QtGui import *
@@ -13,6 +13,15 @@ import numpy as np
 
 import cv2
 
+from Modules import groupbox
+
+class details(groupbox.Ui_Details,QGroupBox):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.setFixedSize(322, 223) 
+
+
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -23,7 +32,7 @@ class MainWindow(QWidget):
         self.setWindowIcon(icon)
         # self.setWindowFlags(Qt.MSWindowsFixedSizeDialogHint)
 
-        stylesheet = open(PurePath(__file__,'../../style/buttons.qss')).read()
+        stylesheet = open(Path(__file__,'../../style/buttons.qss')).read()
 
         #creating main layout
         self.MainLayout = QVBoxLayout()
@@ -34,12 +43,19 @@ class MainWindow(QWidget):
         self.setStyleSheet(stylesheet)
 
         #creating label and adding it to main layout
+        self.sideBySide = QWidget()
+        self.sideBySide.setStyleSheet('background-color:rgba(255,0,0,0)')
+        self.sideBySideLayout = QHBoxLayout(self.sideBySide)
         self.label = QLabel()
         self.label.setPixmap(QPixmap("UI_Files\\no-camera.png").scaled(300,300,Qt.KeepAspectRatio))
-        # self.label.resize(640,480)
-        # self.MainLayout.setFixedSize(self.label.size())
+
         self.label.setScaledContents(True)
-        # self.label.setAlignment(Qt.AlignCenter)
+
+        self.Details = details()
+        self.Details.setStyleSheet("QGroupBox{ margin-bottom : 0px; margin-top: 5px ;padding-top: 5px;subcontrol-origin: margin;subcontrol-position: top center;} QGroupBox:title{ subcontrol-origin: margin;subcontrol-position: top center; font:Bold }")
+
+        self.sideBySideLayout.addWidget(self.label)
+        self.sideBySideLayout.addWidget(self.Details)
         
 
         try:
@@ -59,21 +75,23 @@ class MainWindow(QWidget):
             self.combo_box.setDisabled(True)
             self.selectcam.setDisabled(True)
         
-        # self.selectcam.setStyleSheet(stylesheet)
         self.selectcam.clicked.connect(self.camupdate)
         
 
-        self.MainLayout.addWidget(self.label,alignment=Qt.AlignCenter)
+        self.MainLayout.addWidget(self.sideBySide,alignment=Qt.AlignCenter)
         self.MainLayout.addWidget(self.combo_box,alignment=Qt.AlignCenter)
         self.MainLayout.addWidget(self.selectcam,alignment=Qt.AlignCenter | Qt.AlignTop)
         
 
         # running opencv thread and connecting it to label 
         self.Worker1 = Worker1()
-        # self.Worker1.index = self.cameraindex
         self.Worker1.start()
         self.Worker1.changePixmap.connect(self.ImageUpdateSlot)
+        self.Worker1.updateName.connect(self.updateName)
 
+
+    def updateName(self,name):
+        self.Details.nameLabel.setText(name)
     
     def ImageUpdateSlot(self,image):
         self.label.setPixmap(QPixmap.fromImage(image)) 
@@ -99,37 +117,15 @@ class Worker1(QThread):
         self.Cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
     changePixmap = pyqtSignal(QImage)
+    updateName = pyqtSignal(str)
 
     def main(self,Cap,count):
         Threadran = False
         waitTime = None
 
-        PATH = 'pictures'
-        if not os.path.exists(PATH):
-            os.mkdir(PATH)
-
-        # faces encondings and names
-        images = []
-        self.names = []
-        self.encode_list = []
-        users = os.listdir(PATH)
         self.name = "unknown"
-        
-        # print(users)
-
-        # getting img name from img files
-        for ppl in users:
-            cur_img = cv2.imread(f'{PATH}/{ppl}')
-            images.append(cur_img)
-            self.names.append(os.path.splitext(ppl)[0])
-
-        # encoding images
-        for img in images:
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            boxes = face_recognition.face_locations(img)
-            encodes_cur_frame = face_recognition.face_encodings(img, boxes)[0]
-            # encode = face_recognition.face_encodings(img)[0]
-            self.encode_list.append(encodes_cur_frame)
+        self.names = json.load(open('encodings/names.json'))
+        self.encode_list = pickle.load(open('encodings/encodings.dat','rb'))
 
         while True:
             if count == None:
@@ -139,7 +135,6 @@ class Worker1(QThread):
                 if self.forcequit:
                     break
 
-                print(self.index)
                 Cap = cv2.VideoCapture(self.index)
                 self.ThreadActive = True
 
@@ -151,7 +146,7 @@ class Worker1(QThread):
             if Threadran == False:
                 faces_cur_frame = face_recognition.face_locations(imgs)
                 encodes_cur_frame = face_recognition.face_encodings(imgs, faces_cur_frame)
-                # count = 0
+
                 Threadran = True
                 waitTime = time.time()
                 for encodeFace, faceLoc in zip(encodes_cur_frame, faces_cur_frame):
@@ -159,47 +154,35 @@ class Worker1(QThread):
                     match = face_recognition.compare_faces(self.encode_list, encodeFace, tolerance=0.60)
                     face_dis = face_recognition.face_distance(self.encode_list, encodeFace)
                     best_match_index = np.argmin(face_dis)
-                    # print("s",best_match_index)
-                    # print(self.name)
+
                     if match[best_match_index]:
-                        self.name = self.names[best_match_index].upper()
+                        self.name = self.names[best_match_index].capitalize()
+                        self.updateName.emit(self.name)
                         
 
 
             if time.time()-waitTime > 5:
                 Threadran = False
-                    # time.sleep(0.5)
-                    # print(self.name)
-                    # y1, x2, y2, x1 = (i*4 for i in faceLoc)
-                    # cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                    # cv2.rectangle(frame, (x1, y2 - 20), (x2, y2), (0, 255, 0), cv2.FILLED)
-                    # cv2.putText(frame, self.name, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 0.5, (255, 255, 255), 1)
-
+                    
                     
             gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
             faces = self.Cascade.detectMultiScale(
                 gray,
                 scaleFactor=1.1,
                 minNeighbors=3,
-                minSize=(30, 30),
+                minSize=(100,100),
                 flags=cv2.CASCADE_SCALE_IMAGE
             )
             for (x,y,z,h) in faces:
                 center = (x + z//2, y + h//2)
                 frame = cv2.ellipse(frame, center, (z//2, h//2), 0, 0, 360, (255, 0, 255), 4)
-                # frame = cv2.rectangle(frame, (x, y), (x+z, y+h), (225, 0, 0), 2)
                 cv2.putText(frame, self.name, (x + 6, y - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 1)
             
             rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            # FlippedImage = cv2.flip(rgbImage, 1)
-            # print(frame.shape[:2])
             
             self.convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1],rgbImage.shape[0], QImage.Format_RGB888)
             p = self.convertToQtFormat.scaled(*frame.shape[:2], Qt.KeepAspectRatio)
             self.changePixmap.emit(p)
-
-    def facerec(self,frame,encode_list_known,names):
-        pass
 
     def run(self):
         self.main(self.Cap,self.camcount)

@@ -22,22 +22,13 @@
   <property name="windowTitle">
    <string>About Us</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>facial-recognition.png</normaloff>facial-recognition.png</iconset>
+  </property>
   <property name="sizeGripEnabled">
    <bool>true</bool>
   </property>
-  <widget class="QListWidget" name="listWidget">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>-10</y>
-     <width>781</width>
-     <height>541</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
@@ -170,8 +161,6 @@
    </property>
   </widget>
  </widget>
- <resources>
-  <include location="about us.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

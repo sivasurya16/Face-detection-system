@@ -87,7 +87,7 @@
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>370</y>
+      <y>420</y>
       <width>441</width>
       <height>41</height>
      </rect>
@@ -103,11 +103,29 @@
      <string>ABOUT</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="addPicture">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>360</y>
+      <width>441</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>ADD PICTURE</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources>
-  <include location="about us.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
